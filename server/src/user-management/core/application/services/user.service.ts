@@ -1,42 +1,26 @@
 import { User } from "../../domain/entities/user.entity";
 import { IUserReposiory } from "../../domain/ports/user.interface";
-import { hashPassword, isValidEmail } from "../../../user.helpers";
-
-export function buildUserService(userRepository: IUserReposiory) {
-  async function register(userData: User) {
-    // Validate the incomming data, please.
-    // Validate if the user already exist
+import { QueryResult } from "pg";
 
 
-    /// Validate for spaces too.
-    // I mean, just remove the spaces in between.
-    const validateTypeIntegrity = Object.entries(userData).every(
-      ([_, value]) => typeof value === "string" && value !== 'json'
-    );
-
-    if (
-      validateTypeIntegrity === false &&
-      isValidEmail(userData.email) === false 
-    ) {
-      throw new Error(
-        `Bad request: invalid data format in users registration data`
-      );
-    }
-
-    const salt = 10;
-    const hashedPassword = await hashPassword(userData.password, salt);
+export async function buildUserService(buildUserRepository: IUserReposiory) {
+  async function generateUser(userInput: User) {
     const user = {
-      name: userData.name,
-      lastname: userData.lastname,
-      email: userData.email,
-      password: hashedPassword,
+      name: userInput.name,
+      lastname: userInput.lastname,
+      email: userInput.email,
+      password: userInput.password, // Correctly assigning the password
     };
 
-    const createNewUser = await userRepository.createNewUser(user);
-    return createNewUser;
+    const userCreated = await buildUserRepository.createNewUser(user);
+    if (userCreated) {
+      console.log("User has been created successfully");
+      return userCreated;
+    }
+    throw new Error('User creation failed');
   }
 
   return {
-    register,
+    generateUser,
   };
 }

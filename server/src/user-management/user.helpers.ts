@@ -14,3 +14,10 @@ export const comparePassword = (password: string, hashedPassword: string): Promi
   };
 
 
+
+export function isValidMinPasswordChars(password: string): boolean {
+    const sanatizedPassword = password.trim()
+    return sanatizedPassword.length < 8 ? false : true;
+}
+
+
