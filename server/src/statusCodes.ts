@@ -1,0 +1,11 @@
+enum StatusCodes {
+    OK = 200,
+    NON_AUTHORITATIVE_INFORMATION = 203,
+    BAD_REQUEST = 400,
+    FORBIDDEN = 403,
+    REQUEST_TIMEOUT = 408,
+    NETWORK_AUTHENTICATION_REQUIRED = 511
+}
+
+
+export {StatusCodes};

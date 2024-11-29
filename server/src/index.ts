@@ -1,29 +1,26 @@
-import express, {Request, Response } from 'express';
-import { manageUserController } from './controllers/user.controller';
-import { baseRouter } from './router';
+import express from "express";
+import { baseRouter } from "./router";
+// import morgan  from "morgan";
+import { initServer } from "./server";
+import morgan from "morgan";
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+export const app = express();
+export const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use("/", baseRouter);
+app.use(morgan("dev"));
+// app.use(cors());
 
-async function initApp() {
-  const httpUserController = manageUserController();
-  Object.values(httpUserController).forEach((endpoints) => {
-    const { route, method, ...endpoint} = endpoints;
-    
-    switch(method){
-      case "GET": {
-        // Create a mapper for the request
-        baseRouter.get(route, endpoint.handler);
-      }
-    }
-  })
 
+function init(){
+  app.listen(PORT, () => {
+    initServer(app)
+    console.log(`Server is running on http://localhost:${PORT}`);
+  }); 
 }
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+init();
 
-initApp().catch((err) => console.log(`Failed to initialize app: ${err}`));
+
+
