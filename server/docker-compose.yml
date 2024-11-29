@@ -1,3 +1,4 @@
+version: '3.8'
 
 services:
   db:
@@ -11,6 +12,9 @@ services:
       POSTGRES_PASSWORD: 123456789
     volumes:
       - local_pgdata:/var/lib/postgresql/data
+    networks:
+      - pg_network
+
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4
@@ -22,7 +26,13 @@ services:
       PGADMIN_DEFAULT_PASSWORD: 123456789
     volumes:
       - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - pg_network
 
 volumes:
   local_pgdata:
   pgadmin-data:
+
+networks:
+  pg_network:
+    driver: bridge

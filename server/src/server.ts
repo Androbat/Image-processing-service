@@ -1,7 +1,18 @@
-// const PORT = process.env.PORT || 3001;
+import { manageUserController } from "./controllers/user.controller";
+import { baseRouter } from "./router";
 
-// async function bootstrap(app:){
-//     app.listen(PORT, () => {
-//         console.log(`Server is running on http://localhost:${PORT}`);
-//       });
-// }
+export function initServer(app: Express.Application) {
+  const httpUserController = manageUserController();
+
+  Object.values(httpUserController).forEach((endpoints) => {
+    const { route, method, handler } = endpoints;
+
+    switch (method) {
+      case "POST": {
+        // Create a mapper for the request
+        console.log("called");
+        baseRouter.post(route, handler);
+      }
+    }
+  });
+}

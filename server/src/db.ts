@@ -4,14 +4,29 @@ const { Client } = pg;
 
 // After testing move the connection properties to .env
 // Once the .env variables are added, validate they're not undefined.
-export const client = new Client({
-  user: "postgres",
-  password: "123456789",
-  host: "localhost",
-  port: 5432,
-  database: "postgre_db",
-});
 
-export async function query(querystr: string, queryParameters: any[]) {
+
+
+async function connectDatabase(): Promise<pg.Client> {
+  const client = new Client({
+    user: "postgres",
+    password: "123456789",
+    host: "localhost",
+    port: 5432,
+    database: "img_processing",
+  });
+
+  await client.connect();
+  return client; // return the client after connection is established
+}
+
+
+
+export async function query<T>(querystr: string, queryParameters: T[] = []) {
+  const client = await connectDatabase();
   return await client.query(querystr, queryParameters);
 }
+
+
+
+

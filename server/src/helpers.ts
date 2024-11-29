@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 
-export function isJson(payload: object): boolan {
+export function isJson(payload: object): boolean {
     return typeof payload === 'object' ? true : false;
 }
 
