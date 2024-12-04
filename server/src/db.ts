@@ -5,6 +5,8 @@ const { Client } = pg;
 // After testing move the connection properties to .env
 // Once the .env variables are added, validate they're not undefined.
 
+type QueryPrimitiveValues = number | string;
+type QueryValue = QueryPrimitiveValues[]; 
 
 
 async function connectDatabase(): Promise<pg.Client> {
@@ -17,12 +19,10 @@ async function connectDatabase(): Promise<pg.Client> {
   });
 
   await client.connect();
-  return client; // return the client after connection is established
-}
+  return client; 
 
 
-
-export async function query<T>(querystr: string, queryParameters: T[] = []) {
+export async function query<T>(querystr: string, queryParameters: QueryValue = []) {
   const client = await connectDatabase();
   return await client.query(querystr, queryParameters);
 }
