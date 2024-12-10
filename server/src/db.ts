@@ -9,7 +9,7 @@ type QueryPrimitiveValues = number | string;
 type QueryValue = QueryPrimitiveValues[]; 
 
 
-async function connectDatabase(): Promise<pg.Client> {
+export async function connectDatabase(): Promise<pg.Client> {
   const client = new Client({
     user: "postgres",
     password: "123456789",
@@ -20,13 +20,9 @@ async function connectDatabase(): Promise<pg.Client> {
 
   await client.connect();
   return client; 
+}
 
-
-export async function query<T>(querystr: string, queryParameters: QueryValue = []) {
+export async function query(querystr: string, queryParameters: QueryValue = []) {
   const client = await connectDatabase();
   return await client.query(querystr, queryParameters);
 }
-
-
-
-

@@ -8,4 +8,4 @@ enum StatusCodes {
 }
 
 
-export {StatusCodes};
+export { StatusCodes };
