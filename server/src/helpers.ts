@@ -1,5 +1,8 @@
 import bcrypt from "bcrypt";
 
+
+
+
 export function isJson(payload: object): boolean {
     return typeof payload === 'object' ? true : false;
 }
@@ -18,7 +21,10 @@ export const comparePassword = (password: string, hashedPassword: string): Promi
     return bcrypt.compare(password, hashedPassword);
   };
 
-
+// PAY ATTENTION TO THIS FUNCTION
+export function mustNotContainOnDefinedValues(reqBody: Express.Request){
+    return Object.values(reqBody).some((value) => typeof value === "undefined");
+}
 
 export function isValidMinPasswordChars(password: string): boolean {
     const sanatizedPassword = password.trim()

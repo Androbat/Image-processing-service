@@ -1,15 +1,25 @@
 import { query } from "../db";
-
+import { nonDuplicateUsers } from "./query.helpers";
 
 export async function buildUserRepository() {
   async function createUser(username: string, password: string) {
     // Need to check if the user exist before inserting it.
     // Check if the user table does exist first too
-    const defineUserQuery = `INSERT INTO Users (username, password) VALUES ($1, $2)`;
+    const userExist = await nonDuplicateUsers(username);
+
+    if (userExist) {
+      return {
+        message: `User Already exist in database`,
+      };
+    }
+
+    const defineInsertUserQuery = `INSERT INTO Users (username, password) VALUES ($1, $2) RETURNING username`;
     const queryParams = [username, password];
-    const insertUserQuery = await query(defineUserQuery, queryParams);
-    const insertedUserData = insertUserQuery.rows[0];
-    return insertedUserData;
+    const insertUserQuery = await query(defineInsertUserQuery, queryParams);
+    const insertResult = insertUserQuery.rows[0];
+    return {
+      message: `User ${insertResult} created successfully`
+    }
   }
 
   return {
@@ -20,10 +30,9 @@ export async function buildUserRepository() {
 // async function insertUserTest(){
 //     const params = ["man", "pass"];
 //     const queryStr = `INSERT INTO users (username, password) VALUES ($1, $2)`;
-    
-    
+
 //     return query(queryStr, params)
-    
+
 // }
 
 // async function getRows(){

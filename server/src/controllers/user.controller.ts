@@ -12,34 +12,35 @@ export function manageUserController() {
       method: "POST",
       route: "/register",
       handler: async (req: Request, res: Response) => {
-        // My user should have the following information: USERNAME & PASSWORD
+
         // The user password should be hashed before being inserted in the database
         const userRepostiory = await buildUserRepository();
+        const salt = 10;
 
         if (!req.body) {
           res.status(StatusCodes.BAD_REQUEST).json({
             message: `Invalid request: request must contain data`,
           });
           return;
-        } else {
-          Object.values(req.body).some((value) => {
-            if (typeof value === "undefined"){
-              res.status(StatusCodes.BAD_REQUEST).json({
-                message: `None of the properties can be undefined`
-              });
-            }
-          })
         }
 
-        
-
+        // Validate no undefined values exist
         const { username, password } = req.body;
-        const salt = 10;
-        
-        const isValidDataTypeInUserFieldValues = [username, password].every((value) => typeof value === "string");
-        if (!isValidDataTypeInUserFieldValues){
+
+        if (!username || !password) {
           res.status(StatusCodes.BAD_REQUEST).json({
-            message: `Wrong data type in user fields: both username and password must be string type`
+            message: `None of the properties can be undefined`,
+          });
+          return;
+        }
+
+
+        const isValidDataTypeInUserFieldValues = [username, password].every(
+          (value) => typeof value === "string"
+        );
+        if (!isValidDataTypeInUserFieldValues) {
+          res.status(StatusCodes.BAD_REQUEST).json({
+            message: `Wrong data type in user fields: both username and password must be string type`,
           });
           return;
         }
@@ -53,15 +54,13 @@ export function manageUserController() {
         }
 
         const passwordHashed = await hashPassword(password, salt);
-        const insertUser = userRepostiory.createUser(username, passwordHashed);
-        res.status(StatusCodes.OK).json({
-          message: `User inserted sucessfully`,
-          username: insertUser
-        });
+        const insertUser = await userRepostiory.createUser(username, passwordHashed);
         
+
+        res.status(StatusCodes.OK).json({
+          message: insertUser.message
+        });
       },
     },
   };
 }
-
-
